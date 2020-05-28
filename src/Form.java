@@ -2,6 +2,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.*;
@@ -12,9 +15,28 @@ class Form extends JFrame {
     static Panel3 panel3;
     static Panel4 panel4;
 
+    JFileChooser fileChooser;
+
+    Date saveTime = null;
+
+    BucketData data;
+
+    Form(BucketData data) {
+        initComponents();
+        addHandlers();
+        this.data = data;
+        showData();
+    }
+
     Form() {
+        initComponents();
+        addHandlers();
+    }
+
+    void initComponents() {
         setLayout(null);
         Date date = new Date();
+        data = new BucketData();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
         setTitle("Редактор Анкет, Егоров С.А. Вариант 8  " + sd.format(date));
         setSize(450, 575);
@@ -31,10 +53,194 @@ class Form extends JFrame {
         panel4 = new Panel4();
         panel4.setVisible(true);
         add(panel4);
+
+        fileChooser = new JFileChooser();
+
         setVisible(true);
     }
 
+    void addHandlers() {
+        panel2.accumulator.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeAccumulator(e);
+            }
+        });
+        panel2.screenSize.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeScreenSize(e);
+            }
+        });
+        panel2.os.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeOs(e);
+            }
+        });
+        panel2.autonomousWorkTime.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeAutonomous(e);
+            }
+        });
+        panel2.model.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeModel(e);
+            }
+        });
+        panel2.manufacturerCountry.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeCountry(e);
+            }
+        });
+        panel2.manufacturerBrand.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeBrand(e);
+            }
+        });
+        panel2.cpuCores.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                onChangeCpu(e);
+            }
+        });
 
+
+        panel3.btnSave.addActionListener(this::save);
+        panel3.btnShow.addActionListener(this::load);
+        panel3.btnClear.addActionListener(this::clear);
+        panel3.btnClose.addActionListener(this::close);
+        panel3.btnColor.addActionListener(this::invertColors);
+        panel3.btnPay.addActionListener(this::pay);
+    }
+
+    void onChangeCountry(KeyEvent event) {
+        data.setManufacturerCountry(panel2.manufacturerCountry.getText());
+    }
+
+    void onChangeBrand(KeyEvent event) {
+        data.setManufacturerBrand(panel2.manufacturerBrand.getText());
+    }
+
+    void onChangeModel(KeyEvent event) {
+        data.setModel(panel2.model.getText());
+    }
+
+    void onChangeCpu(KeyEvent event) {
+        try {
+            int cpu = Integer.parseInt(panel2.cpuCores.getText());
+            data.setCpuCores(cpu);
+        } catch (Exception ex) {
+            //TODO
+        }
+    }
+
+    void onChangeOs(KeyEvent event) {
+        data.setOs(panel2.os.getText());
+    }
+
+    void onChangeScreenSize(KeyEvent event) {
+        try {
+            double screen = Double.parseDouble(panel2.screenSize.getText());
+            data.setScreenSize(screen);
+        } catch (Exception ex) {
+            //TODO
+        }
+    }
+
+    void onChangeAccumulator(KeyEvent event) {
+        try {
+            double accumulator = Double.parseDouble(panel2.accumulator.getText());
+            data.setAccumulator(accumulator);
+        } catch (Exception ex) {
+            //TODO
+        }
+    }
+
+    void onChangeAutonomous(KeyEvent event) {
+        try {
+            double time = Double.parseDouble(panel2.autonomousWorkTime.getText());
+            data.setAutonomousWorkTime(time);
+        } catch (Exception ex) {
+            //TODO
+        }
+    }
+
+
+    void save(ActionEvent e) {
+        int dialogResult = fileChooser.showSaveDialog(this);
+        if (dialogResult != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File selected = fileChooser.getSelectedFile();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(selected))) {
+            oos.writeObject(data);
+            this.saveTime = new Date();
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    void showData() {
+        panel2.cpuCores.setText(Integer.toString(data.getCpuCores()));
+        panel2.accumulator.setText(Double.toString(data.getAccumulator()));
+        panel2.screenSize.setText(Double.toString(data.getScreenSize()));
+        panel2.os.setText(data.getOs());
+
+        panel2.autonomousWorkTime.setText(Double.toString(data.getAutonomousWorkTime()));
+        panel2.model.setText(data.getModel());
+        panel2.manufacturerCountry.setText(data.getManufacturerCountry());
+        panel2.manufacturerBrand.setText(data.getManufacturerBrand());
+    }
+
+    void load(ActionEvent event) {
+        int dialogResult = fileChooser.showOpenDialog(this);
+        if (dialogResult != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        File selected = fileChooser.getSelectedFile();
+        if (selected.canRead()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(selected))) {
+                BucketData loaded = ((BucketData) ois.readObject());
+                Form newForm = new Form(loaded);
+            } catch (Exception ex) {
+
+                System.out.println(ex.getMessage());
+            }
+            //showData();
+
+        } else {
+            //TODO
+        }
+    }
+
+    void clear(ActionEvent event){
+        data = new BucketData();
+        showData();
+    }
+
+    void close(ActionEvent event){
+        System.exit(0);
+    }
+
+    Color invertColor(Color color){
+        return new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
+    }
+
+    void invertColors(ActionEvent event){
+        panel1.setBackground(invertColor( panel1.getBackground()));
+        panel2.setBackground(invertColor( panel2.getBackground()));
+        panel3.setBackground(invertColor( panel3.getBackground()));
+        panel4.setBackground(invertColor( panel4.getBackground()));
+    }
+
+void pay(ActionEvent event){
+        PayForm payForm = new PayForm();
+}
 }
 
 class Panel1 extends JPanel {
@@ -50,8 +256,16 @@ class Panel1 extends JPanel {
 }
 
 class Panel2 extends JPanel {
-    Panel2() {
+    JTextField manufacturerCountry;
+    JTextField manufacturerBrand;
+    JTextField model;
+    JTextField cpuCores;
+    JTextField screenSize;
+    JTextField os;
+    JTextField accumulator;
+    JTextField autonomousWorkTime;
 
+    Panel2() {
         setLayout(null);
         setBounds(10, 65, 415, 180);
         setBackground(Color.orange);
@@ -63,22 +277,22 @@ class Panel2 extends JPanel {
         JLabel label6 = new JLabel("Операционная система:");
         JLabel label7 = new JLabel("Емкость аккумулятора:");
         JLabel label8 = new JLabel("Время автономной работы:");
-        JTextField area1 = new JTextField();
-        JTextField area2 = new JTextField();
-        JTextField area3 = new JTextField();
-        JTextField area4 = new JTextField();
-        JTextField area5 = new JTextField();
-        JTextField area6 = new JTextField();
-        JTextField area7 = new JTextField();
-        JTextField area8 = new JTextField();
-        area1.setBounds(200, 5, 100, 20);
-        area2.setBounds(200, 25, 100, 20);
-        area3.setBounds(200, 45, 100, 20);
-        area4.setBounds(200, 65, 100, 20);
-        area5.setBounds(200, 85, 100, 20);
-        area6.setBounds(200, 105, 100, 20);
-        area7.setBounds(200, 125, 100, 20);
-        area8.setBounds(200, 145, 100, 20);
+        manufacturerCountry = new JTextField();
+        manufacturerBrand = new JTextField();
+        model = new JTextField();
+        cpuCores = new JTextField();
+        screenSize = new JTextField();
+        os = new JTextField();
+        accumulator = new JTextField();
+        autonomousWorkTime = new JTextField();
+        manufacturerCountry.setBounds(200, 5, 100, 20);
+        manufacturerBrand.setBounds(200, 25, 100, 20);
+        model.setBounds(200, 45, 100, 20);
+        cpuCores.setBounds(200, 65, 100, 20);
+        screenSize.setBounds(200, 85, 100, 20);
+        os.setBounds(200, 105, 100, 20);
+        accumulator.setBounds(200, 125, 100, 20);
+        autonomousWorkTime.setBounds(200, 145, 100, 20);
         label1.setBounds(10, 5, 150, 20);
         label2.setBounds(10, 25, 150, 20);
         label3.setBounds(10, 45, 100, 20);
@@ -88,14 +302,14 @@ class Panel2 extends JPanel {
         label7.setBounds(10, 125, 158, 20);
         label8.setBounds(10, 145, 158, 20);
 
-        add(area1);
-        add(area2);
-        add(area3);
-        add(area4);
-        add(area5);
-        add(area6);
-        add(area7);
-        add(area8);
+        add(manufacturerCountry);
+        add(manufacturerBrand);
+        add(model);
+        add(cpuCores);
+        add(screenSize);
+        add(os);
+        add(accumulator);
+        add(autonomousWorkTime);
 
         add(label1);
         add(label2);
@@ -129,6 +343,13 @@ class Panel3 extends JPanel {
         jb[3] = new JButton("Выход с оплатой");
         jb[4] = new JButton("Выход без сохранения");
         jb[5] = new JButton("Инвентировать цвет заливки полей");
+
+        btnSave = jb[0];
+        btnShow = jb[1];
+        btnClear = jb[2];
+        btnPay = jb[3];
+        btnClose = jb[4];
+        btnColor = jb[5];
 
 
         jb[1].setFont(new Font("Dialog", Font.PLAIN, 11));

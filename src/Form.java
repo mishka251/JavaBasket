@@ -26,11 +26,13 @@ class Form extends JFrame {
         addHandlers();
         this.data = data;
         showData();
+        panel4.lblIsFilled.setText("Да");
     }
 
     Form() {
         initComponents();
         addHandlers();
+        panel4.lblIsFilled.setText("Нет");
     }
 
     void initComponents() {
@@ -180,6 +182,7 @@ class Form extends JFrame {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(selected))) {
             oos.writeObject(data);
             this.saveTime = new Date();
+            panel4.lblIsFilled.setText("Да");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -221,6 +224,7 @@ class Form extends JFrame {
     void clear(ActionEvent event) {
         data = new BucketData();
         showData();
+        panel4.lblIsFilled.setText("Нет");
     }
 
     void close(ActionEvent event) {
@@ -374,6 +378,7 @@ class Panel3 extends JPanel {
 }
 
 class Panel4 extends JPanel {
+    JLabel lblIsFilled;
     Panel4() {
         setLayout(null);
         setBounds(10, 440, 415, 90);
@@ -382,7 +387,7 @@ class Panel4 extends JPanel {
         JLabel label2 = new JLabel("Стоимость заказа:");
         JLabel label3 = new JLabel("Номер заказа:");
 
-        JLabel label5 = new JLabel("Нет");
+        lblIsFilled = new JLabel("Нет");
         JLabel label6 = new JLabel("0");
         JLabel label7 = new JLabel("0");
 
@@ -390,7 +395,7 @@ class Panel4 extends JPanel {
         label2.setBounds(10, 25, 120, 20);
         label3.setBounds(10, 45, 120, 20);
 
-        label5.setBounds(140, 5, 103, 20);
+        lblIsFilled.setBounds(140, 5, 103, 20);
         label6.setBounds(140, 25, 74, 20);
         label7.setBounds(140, 45, 77, 20);
 
@@ -398,7 +403,7 @@ class Panel4 extends JPanel {
         add(label2);
         add(label3);
 
-        add(label5);
+        add(lblIsFilled);
         add(label6);
         add(label7);
 

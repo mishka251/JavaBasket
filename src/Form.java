@@ -293,14 +293,16 @@ class Panel2 extends JPanel {
         os = new JTextField();
         accumulator = new JTextField();
         autonomousWorkTime = new JTextField();
-        manufacturerCountry.setBounds(200, 5, 100, 20);
-        manufacturerBrand.setBounds(200, 25, 100, 20);
-        model.setBounds(200, 45, 100, 20);
-        cpuCores.setBounds(200, 65, 100, 20);
-        screenSize.setBounds(200, 85, 100, 20);
-        os.setBounds(200, 105, 100, 20);
-        accumulator.setBounds(200, 125, 100, 20);
-        autonomousWorkTime.setBounds(200, 145, 100, 20);
+
+        manufacturerCountry.setBounds(310, 5, 100, 20);
+        manufacturerBrand.setBounds(310, 25, 100, 20);
+        model.setBounds(310, 45, 100, 20);
+        cpuCores.setBounds(310, 65, 100, 20);
+        screenSize.setBounds(310, 85, 100, 20);
+        os.setBounds(310, 105, 100, 20);
+        accumulator.setBounds(310, 125, 100, 20);
+        autonomousWorkTime.setBounds(310, 145, 100, 20);
+
         label1.setBounds(10, 5, 150, 20);
         label2.setBounds(10, 25, 150, 20);
         label3.setBounds(10, 45, 100, 20);

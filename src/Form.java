@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 import javax.swing.*;
 
 class Form extends JFrame {
@@ -183,6 +184,9 @@ class Form extends JFrame {
             oos.writeObject(data);
             this.saveTime = new Date();
             panel4.lblIsFilled.setText("Да");
+            Random random = new Random();
+            int cost = 20_000 + random.nextInt(10_000);
+            panel4.lblCost.setText(Integer.toString(cost));
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
@@ -379,6 +383,8 @@ class Panel3 extends JPanel {
 
 class Panel4 extends JPanel {
     JLabel lblIsFilled;
+    JLabel lblCost;
+
     Panel4() {
         setLayout(null);
         setBounds(10, 440, 415, 90);
@@ -389,15 +395,15 @@ class Panel4 extends JPanel {
 
         lblIsFilled = new JLabel("Нет");
         JLabel label6 = new JLabel("0");
-        JLabel label7 = new JLabel("0");
+        lblCost = new JLabel("0");
 
         label1.setBounds(10, 5, 130, 20);
         label2.setBounds(10, 25, 120, 20);
         label3.setBounds(10, 45, 120, 20);
 
         lblIsFilled.setBounds(140, 5, 103, 20);
-        label6.setBounds(140, 25, 74, 20);
-        label7.setBounds(140, 45, 77, 20);
+        lblCost.setBounds(140, 25, 77, 20);
+        label6.setBounds(140, 45, 74, 20);
 
         add(label1);
         add(label2);
@@ -405,7 +411,7 @@ class Panel4 extends JPanel {
 
         add(lblIsFilled);
         add(label6);
-        add(label7);
+        add(lblCost);
 
     }
 }

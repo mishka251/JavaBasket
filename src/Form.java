@@ -218,29 +218,29 @@ class Form extends JFrame {
         }
     }
 
-    void clear(ActionEvent event){
+    void clear(ActionEvent event) {
         data = new BucketData();
         showData();
     }
 
-    void close(ActionEvent event){
+    void close(ActionEvent event) {
         System.exit(0);
     }
 
-    Color invertColor(Color color){
-        return new Color(255-color.getRed(), 255-color.getGreen(), 255-color.getBlue());
+    Color invertColor(Color color) {
+        return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue());
     }
 
-    void invertColors(ActionEvent event){
-        panel1.setBackground(invertColor( panel1.getBackground()));
-        panel2.setBackground(invertColor( panel2.getBackground()));
-        panel3.setBackground(invertColor( panel3.getBackground()));
-        panel4.setBackground(invertColor( panel4.getBackground()));
+    void invertColors(ActionEvent event) {
+        panel1.setBackground(invertColor(panel1.getBackground()));
+        panel2.setBackground(invertColor(panel2.getBackground()));
+        panel3.setBackground(invertColor(panel3.getBackground()));
+        panel4.setBackground(invertColor(panel4.getBackground()));
     }
 
-void pay(ActionEvent event){
+    void pay(ActionEvent event) {
         PayForm payForm = new PayForm();
-}
+    }
 }
 
 class Panel1 extends JPanel {

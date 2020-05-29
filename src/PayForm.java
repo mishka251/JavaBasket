@@ -4,7 +4,8 @@ import java.awt.event.ActionEvent;
 
 public class PayForm extends JFrame {
     JTextField textField;
-    PayForm(){
+
+    PayForm() {
         setLayout(null);
         setSize(350, 120);
         JPanel panel = new JPanel();
@@ -26,23 +27,23 @@ public class PayForm extends JFrame {
         ok.addActionListener(this::obOnClick);
     }
 
-    boolean isValidCardNumber(String cardNumber){
-        if(cardNumber.length()!=16){
+    boolean isValidCardNumber(String cardNumber) {
+        if (cardNumber.length() != 16) {
             return false;
         }
-        for(char c:cardNumber.toCharArray()){
-            if(c<'0'||c>'9'){
+        for (char c : cardNumber.toCharArray()) {
+            if (c < '0' || c > '9') {
                 return false;
             }
         }
         return true;
     }
 
-    void obOnClick(ActionEvent event){
+    void obOnClick(ActionEvent event) {
         String cardNumber = textField.getText();
-        if(!isValidCardNumber(cardNumber)){
+        if (!isValidCardNumber(cardNumber)) {
             JOptionPane.showMessageDialog(this, "Введите 16 цифр без пробелов");
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "оплачено");
             System.exit(0);
         }

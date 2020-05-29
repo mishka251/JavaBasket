@@ -1,9 +1,9 @@
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.geom.Ellipse2D;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -256,9 +256,10 @@ class Panel1 extends JPanel {
         setLayout(null);
         setBounds(10, 10, 415, 50);
         setBackground(Color.yellow);
-        JLabel label1 = new JLabel("Магазин аксессуаров DNS");
+        JLabel label1 = new OvalBackgroundLabel("Магазин аксессуаров DNS");
         label1.setFont(new Font("Dialog", Font.PLAIN, 16));
-        label1.setBounds(85, 10, 250, 20);
+        label1.setBounds(100, 10, 200, 20);
+        label1.setForeground(Color.white);
         add(label1, BorderLayout.NORTH);
     }
 }
@@ -415,5 +416,20 @@ class Panel4 extends JPanel {
         add(label6);
         add(lblCost);
 
+    }
+}
+
+
+class OvalBackgroundLabel extends JLabel {
+
+    public OvalBackgroundLabel(String text) {
+        super(text);
+    }
+
+    public void paintComponent(Graphics g) {
+        g.setColor(new Color(120, 60, 0));
+        g.drawOval(0, 0, getWidth(), getHeight());
+        g.fillOval(0, 0, getWidth(), getHeight());
+        super.paintComponent(g);
     }
 }

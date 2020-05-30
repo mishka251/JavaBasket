@@ -2,8 +2,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.geom.Ellipse2D;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,10 +20,13 @@ class Form extends JFrame {
 
     BucketData data;
 
-    Form(BucketData data) {
+    int orderNumber = 1;
+
+    Form(BucketData data, Date saveTime) {
         initComponents();
         addHandlers();
         this.data = data;
+        this.saveTime = saveTime;
         showData();
         panel4.lblIsFilled.setText("Да");
     }
@@ -34,6 +35,7 @@ class Form extends JFrame {
         initComponents();
         addHandlers();
         panel4.lblIsFilled.setText("Нет");
+        panel2.manufacturerBrand.setEditable(false);
     }
 
     void initComponents() {
@@ -42,7 +44,7 @@ class Form extends JFrame {
         data = new BucketData();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
         setTitle("Редактор Анкет, Егоров С.А. Вариант 8  " + sd.format(date));
-        setSize(450, 575);
+        setSize(450, 635);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel1 = new Panel1();
         panel1.setVisible(true);
@@ -119,10 +121,14 @@ class Form extends JFrame {
         panel3.btnClose.addActionListener(this::close);
         panel3.btnColor.addActionListener(this::invertColors);
         panel3.btnPay.addActionListener(this::pay);
+
+        panel3.btnStatistic.addActionListener(this::showStatistic);
+        panel3.btnColor2.addActionListener(this::setColor);
     }
 
     void onChangeCountry(KeyEvent event) {
         data.setManufacturerCountry(panel2.manufacturerCountry.getText());
+        panel2.manufacturerBrand.setEditable(!panel2.manufacturerCountry.getText().equals(""));
     }
 
     void onChangeBrand(KeyEvent event) {
@@ -185,6 +191,8 @@ class Form extends JFrame {
             this.saveTime = new Date();
             panel4.lblIsFilled.setText("Да");
             Random random = new Random();
+            orderNumber++;
+            panel4.lblNumber.setText(Integer.toString(orderNumber));
             int cost = 20_000 + random.nextInt(10_000);
             panel4.lblCost.setText(Integer.toString(cost));
         } catch (Exception ex) {
@@ -213,7 +221,7 @@ class Form extends JFrame {
         if (selected.canRead()) {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(selected))) {
                 BucketData loaded = ((BucketData) ois.readObject());
-                Form newForm = new Form(loaded);
+                Form newForm = new Form(loaded, new Date(selected.lastModified()));
             } catch (Exception ex) {
 
                 System.out.println(ex.getMessage());
@@ -232,6 +240,11 @@ class Form extends JFrame {
     }
 
     void close(ActionEvent event) {
+        String surname = "Egorov";
+        int first = surname.getBytes()[0];
+        int last = surname.getBytes()[surname.length() - 1];
+        int result = first * last + 33;
+        JOptionPane.showMessageDialog(this, Integer.toString(result), "", JOptionPane.WARNING_MESSAGE);
         System.exit(0);
     }
 
@@ -248,6 +261,76 @@ class Form extends JFrame {
 
     void pay(ActionEvent event) {
         PayForm payForm = new PayForm();
+    }
+
+    int filledFieldsCount() {
+        int cnt = 0;
+        for (int i = 0; i < panel2.textFields.length; i++) {
+            if (!panel2.textFields[i].getText().equals("")) {
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+
+    boolean isInteger(String s) {
+        try {
+            int i = Integer.parseInt(s);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    boolean isDouble(String s) {
+        try {
+            double i = Double.parseDouble(s);
+            return true;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+    }
+
+    int errorsFieldCount() {
+        int count = 0;
+        if (!isInteger(panel2.cpuCores.getText())) {
+            count++;
+        }
+        if (!isDouble(panel2.screenSize.getText())) {
+            count++;
+        }
+        if (!isDouble(panel2.accumulator.getText())) {
+            count++;
+        }
+        if (!isDouble(panel2.autonomousWorkTime.getText())) {
+            count++;
+        }
+        return count;
+    }
+
+    void showStatistic(ActionEvent event) {
+        int filledFields = filledFieldsCount();
+        int errors = errorsFieldCount();
+
+        StatisticData sd = new StatisticData(filledFields, errors, saveTime);
+        new Form1(sd);
+    }
+
+    void setColor(ActionEvent event) {
+        Color color = new Color(160);
+        for (int i = 0; i < panel3.jb.length; i++) {
+            panel3.jb[i].setBackground(color);
+        }
+        JPanel[] panels = new JPanel[]{
+                panel1, panel2, panel3, panel4
+        };
+        for (int i = 0; i < panels.length; i++) {
+            Rectangle bounds = panels[i].getBounds();
+            bounds.y += i * 40;
+            panels[i].setBounds(bounds);
+        }
+        JOptionPane.showMessageDialog(this, "Перекрасили, подвинули", "", JOptionPane.QUESTION_MESSAGE);
+
     }
 }
 
@@ -273,6 +356,8 @@ class Panel2 extends JPanel {
     JTextField os;
     JTextField accumulator;
     JTextField autonomousWorkTime;
+
+    JTextField[] textFields;
 
     Panel2() {
         setLayout(null);
@@ -330,6 +415,17 @@ class Panel2 extends JPanel {
         add(label6);
         add(label7);
         add(label8);
+
+        textFields = new JTextField[]{
+                manufacturerCountry,
+                manufacturerBrand,
+                model,
+                cpuCores,
+                screenSize,
+                os,
+                accumulator,
+                autonomousWorkTime,
+        };
     }
 }
 
@@ -342,18 +438,23 @@ class Panel3 extends JPanel {
     JButton btnPay;
     JButton btnClose;
     JButton btnColor;
+    JButton btnStatistic;
+    JButton btnColor2;
+
 
     Panel3() {
-        setBounds(10, 250, 415, 185);
+        setBounds(10, 250, 415, 245);
         setBackground(Color.orange);
         setLayout(null);
-        jb = new JButton[6];
+        jb = new JButton[8];
         jb[0] = new JButton("Сохранить заказ");
         jb[1] = new JButton("Просмотреть окно корзины");
         jb[2] = new JButton("Очистить поля");
         jb[3] = new JButton("Выход с оплатой");
         jb[4] = new JButton("Выход без сохранения");
         jb[5] = new JButton("Инвентировать цвет заливки полей");
+        jb[6] = new JButton("Статистика");
+        jb[7] = new JButton("Color");
 
         btnSave = jb[0];
         btnShow = jb[1];
@@ -361,43 +462,42 @@ class Panel3 extends JPanel {
         btnPay = jb[3];
         btnClose = jb[4];
         btnColor = jb[5];
+        btnStatistic = jb[6];
+        btnColor2 = jb[7];
 
 
-        jb[1].setFont(new Font("Dialog", Font.PLAIN, 11));
-        jb[2].setFont(new Font("Dialog", Font.PLAIN, 11));
-        jb[3].setFont(new Font("Dialog", Font.PLAIN, 11));
-        jb[0].setFont(new Font("Dialog", Font.PLAIN, 11));
-        jb[4].setFont(new Font("Dialog", Font.PLAIN, 11));
-        jb[5].setFont(new Font("Dialog", Font.PLAIN, 11));
         jb[0].setBounds(10, 10, 180, 50);
         jb[1].setBounds(10, 65, 180, 50);
         jb[2].setBounds(10, 120, 180, 50);
         jb[3].setBounds(210, 10, 180, 50);
         jb[4].setBounds(210, 65, 180, 50);
         jb[5].setBounds(210, 120, 180, 50);
-        add(jb[0]);
-        add(jb[1]);
-        add(jb[2]);
-        add(jb[3]);
-        add(jb[4]);
-        add(jb[5]);
+
+        jb[6].setBounds(10, 175, 180, 50);
+        jb[7].setBounds(210, 175, 180, 50);
+
+        for (int i = 0; i < jb.length; i++) {
+            jb[i].setFont(new Font("Dialog", Font.PLAIN, 11));
+            add(jb[i]);
+        }
     }
 }
 
 class Panel4 extends JPanel {
     JLabel lblIsFilled;
     JLabel lblCost;
+    JLabel lblNumber;
 
     Panel4() {
         setLayout(null);
-        setBounds(10, 440, 415, 90);
+        setBounds(10, 500, 415, 90);
         setBackground(Color.yellow);
         JLabel label1 = new JLabel("Корзина заполнена?");
         JLabel label2 = new JLabel("Стоимость заказа:");
         JLabel label3 = new JLabel("Номер заказа:");
 
         lblIsFilled = new JLabel("Нет");
-        JLabel label6 = new JLabel("0");
+        lblNumber = new JLabel("1");
         lblCost = new JLabel("0");
 
         label1.setBounds(10, 5, 130, 20);
@@ -406,14 +506,14 @@ class Panel4 extends JPanel {
 
         lblIsFilled.setBounds(140, 5, 103, 20);
         lblCost.setBounds(140, 25, 77, 20);
-        label6.setBounds(140, 45, 74, 20);
+        lblNumber.setBounds(140, 45, 74, 20);
 
         add(label1);
         add(label2);
         add(label3);
 
         add(lblIsFilled);
-        add(label6);
+        add(lblNumber);
         add(lblCost);
 
     }

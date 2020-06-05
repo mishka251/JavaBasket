@@ -22,6 +22,8 @@ class Form extends JFrame {
 
     int orderNumber = 1;
 
+    PosgtresDB db;
+
     Form(BucketData data, Date saveTime) {
         initComponents();
         addHandlers();
@@ -29,6 +31,7 @@ class Form extends JFrame {
         this.saveTime = saveTime;
         showData();
         panel4.lblIsFilled.setText("Да");
+        this.db = new PosgtresDB();
     }
 
     Form() {
@@ -36,6 +39,7 @@ class Form extends JFrame {
         addHandlers();
         panel4.lblIsFilled.setText("Нет");
         panel2.manufacturerBrand.setEditable(false);
+        this.db = new PosgtresDB();
     }
 
     void initComponents() {
@@ -44,7 +48,7 @@ class Form extends JFrame {
         data = new BucketData();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
         setTitle("Редактор Анкет, Егоров С.А. Вариант 8  " + sd.format(date));
-        setSize(450, 635);
+        setSize(450, 666);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel1 = new Panel1();
         panel1.setVisible(true);
@@ -124,6 +128,34 @@ class Form extends JFrame {
 
         panel3.btnStatistic.addActionListener(this::showStatistic);
         panel3.btnColor2.addActionListener(this::setColor);
+
+        panel3.btnConnectDb.addActionListener(this::connectToDb);
+        panel3.btnShowDb.addActionListener(this::showTables);
+        panel3.btnCreateTable.addActionListener(this::createTable);
+    }
+
+    void connectToDb(ActionEvent event) {
+        try {
+            db.connect();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    void showTables(ActionEvent event) {
+        try {
+            DbTableForm form = new DbTableForm(db, null);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    void createTable(ActionEvent event) {
+        try {
+            CreateTableForm form = new CreateTableForm(db);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     void onChangeCountry(KeyEvent event) {
@@ -313,7 +345,7 @@ class Form extends JFrame {
         int errors = errorsFieldCount();
 
         StatisticData sd = new StatisticData(filledFields, errors, saveTime);
-        new Form1(sd);
+        new Form1(sd, db);
     }
 
     void setColor(ActionEvent event) {
@@ -441,12 +473,15 @@ class Panel3 extends JPanel {
     JButton btnStatistic;
     JButton btnColor2;
 
+    JButton btnCreateTable;
+    JButton btnConnectDb;
+    JButton btnShowDb;
 
     Panel3() {
-        setBounds(10, 250, 415, 245);
+        setBounds(10, 250, 415, 275);
         setBackground(Color.orange);
         setLayout(null);
-        jb = new JButton[8];
+        jb = new JButton[11];
         jb[0] = new JButton("Сохранить заказ");
         jb[1] = new JButton("Просмотреть окно корзины");
         jb[2] = new JButton("Очистить поля");
@@ -455,6 +490,9 @@ class Panel3 extends JPanel {
         jb[5] = new JButton("Инвентировать цвет заливки полей");
         jb[6] = new JButton("Статистика");
         jb[7] = new JButton("Color");
+        jb[8] = new JButton("Connect");
+        jb[9] = new JButton("Create table");
+        jb[10] = new JButton("Show");
 
         btnSave = jb[0];
         btnShow = jb[1];
@@ -464,6 +502,9 @@ class Panel3 extends JPanel {
         btnColor = jb[5];
         btnStatistic = jb[6];
         btnColor2 = jb[7];
+        btnConnectDb = jb[8];
+        btnCreateTable = jb[9];
+        btnShowDb = jb[10];
 
 
         jb[0].setBounds(10, 10, 180, 50);
@@ -475,6 +516,10 @@ class Panel3 extends JPanel {
 
         jb[6].setBounds(10, 175, 180, 50);
         jb[7].setBounds(210, 175, 180, 50);
+
+        jb[8].setBounds(10, 230, 120, 30);
+        jb[9].setBounds(140, 230, 120, 30);
+        jb[10].setBounds(270, 230, 120, 30);
 
         for (int i = 0; i < jb.length; i++) {
             jb[i].setFont(new Font("Dialog", Font.PLAIN, 11));
@@ -490,7 +535,7 @@ class Panel4 extends JPanel {
 
     Panel4() {
         setLayout(null);
-        setBounds(10, 500, 415, 90);
+        setBounds(10, 530, 415, 90);
         setBackground(Color.yellow);
         JLabel label1 = new JLabel("Корзина заполнена?");
         JLabel label2 = new JLabel("Стоимость заказа:");

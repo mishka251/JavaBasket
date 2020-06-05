@@ -4,6 +4,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import javax.swing.*;
 
 
@@ -14,9 +15,11 @@ class Panel5 extends JPanel {
     JLabel lblOrderDate;
     JLabel lblOrderTime;
 
+    JButton btnSave;
+
     Panel5() {
         setLayout(null);
-        setBounds(10, 10, 320, 110);
+        setBounds(10, 10, 320, 180);
         setBackground(Color.yellow);
         JLabel label1 = new JLabel("Число заполненных полей:");
         JLabel label2 = new JLabel("Количество ошибок при заполнении полей:");
@@ -52,16 +55,25 @@ class Panel5 extends JPanel {
         add(lblNotFilled);
         add(lblOrderDate);
         add(lblOrderTime);
+
+        btnSave = new JButton("Save to db");
+        btnSave.setBounds(250, 110, 60, 20);
+        add(btnSave);
     }
 }
 
 class Form1 extends JFrame {
-    Form1(StatisticData data) {
+    StatisticData data;
+    PosgtresDB db;
+
+    Form1(StatisticData data, PosgtresDB db) {
+        this.data = data;
+        this.db = db;
         setLayout(null);
         Date date = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
         setTitle("Егоров С.А. Вариант 8  " + sd.format(date));
-        setSize(355, 170);
+        setSize(355, 190);
         Panel5 panel5 = new Panel5();
         panel5.setVisible(true);
         add(panel5);
@@ -70,12 +82,29 @@ class Form1 extends JFrame {
         panel5.lblErrors.setText(Integer.toString(data.errors));
         panel5.lblFilled.setText(Integer.toString(data.filledFields));
         panel5.lblNotFilled.setText(Integer.toString(8 - data.filledFields));
-        if(data.orderTime!=null){
+        if (data.orderTime != null) {
             panel5.lblOrderDate.setText(sd.format(data.orderTime));
             panel5.lblOrderTime.setText((new SimpleDateFormat("HH.mm")).format(data.orderTime));
-        }else{
+        } else {
             panel5.lblOrderDate.setText("Не сохранено");
             panel5.lblOrderTime.setText("Не сохранено");
+        }
+        panel5.btnSave.addActionListener(this::saveToDb);
+    }
+
+    void saveToDb(ActionEvent event) {
+        String tableName = "basket_statistic";
+        SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
+        HashMap<String, Object> values = new HashMap<>();
+        values.put("filled_fields", data.filledFields);
+        values.put("errors_count", data.errors);
+        values.put("not_filled_fields_count", 8 - data.filledFields);
+        values.put("save_time", sd.format(new Date()));
+
+        try {
+            CreateInstanceForm createInstanceForm = new CreateInstanceForm(db, tableName, values);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
     }

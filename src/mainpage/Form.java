@@ -1,3 +1,4 @@
+package mainpage;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
@@ -47,7 +48,7 @@ class Form extends JFrame {
         Date date = new Date();
         data = new BucketData();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
-        setTitle("Редактор Анкет, Егоров С.А. Вариант 8  " + sd.format(date));
+        setTitle("Веселова Ю. " + sd.format(date));
         setSize(450, 666);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel1 = new Panel1();
@@ -395,14 +396,14 @@ class Panel2 extends JPanel {
         setLayout(null);
         setBounds(10, 65, 415, 180);
         setBackground(Color.orange);
-        JLabel label1 = new JLabel("Страна-производитель:");
-        JLabel label2 = new JLabel("Фирма-производитель:");
-        JLabel label3 = new JLabel("Модель:");
-        JLabel label4 = new JLabel("Число ядер:");
-        JLabel label5 = new JLabel("Размер диагонали:");
-        JLabel label6 = new JLabel("Операционная система:");
-        JLabel label7 = new JLabel("Емкость аккумулятора:");
-        JLabel label8 = new JLabel("Время автономной работы:");
+        JLabel label1 = new JLabel("Вид мяса:");
+        JLabel label2 = new JLabel("Добавки:");
+        JLabel label3 = new JLabel("Кол-во персон:");
+        JLabel label4 = new JLabel("Адрес доставки:");
+        JLabel label5 = new JLabel("Город:");
+        JLabel label6 = new JLabel("Время доставки:");
+        JLabel label7 = new JLabel("Способ доставки:");
+        JLabel label8 = new JLabel("Кол-во салфеток:");
         manufacturerCountry = new JTextField();
         manufacturerBrand = new JTextField();
         model = new JTextField();

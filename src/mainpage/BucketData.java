@@ -1,3 +1,5 @@
+package mainpage;
+
 import java.io.Serializable;
 
 public class BucketData implements Serializable {

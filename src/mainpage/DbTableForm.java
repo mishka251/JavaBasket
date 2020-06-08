@@ -1,3 +1,4 @@
+package mainpage;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
@@ -28,7 +29,7 @@ public class DbTableForm extends JFrame {
         setSize(700, 400);
         setVisible(true);
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
-        setTitle("Text Editor. Rezyapov D.N. Вариант 5  " + sd.format(new Date()));
+        setTitle("Веселова Ю. " + sd.format(new Date()));
 
         JPanel panel1 = new JPanel();
         panel1.setBounds(20, 50, 660, 230);

@@ -1,3 +1,4 @@
+package mainpage;
 public class TableColumn {
     public String name;
     public String type;

@@ -1,3 +1,4 @@
+package mainpage;
 import java.util.Date;
 
 public class StatisticData {

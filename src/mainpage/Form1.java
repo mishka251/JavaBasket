@@ -1,3 +1,4 @@
+package mainpage;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -72,7 +73,7 @@ class Form1 extends JFrame {
         setLayout(null);
         Date date = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
-        setTitle("Егоров С.А. Вариант 8  " + sd.format(date));
+        setTitle("Веселова Ю." + sd.format(date));
         setSize(355, 190);
         Panel5 panel5 = new Panel5();
         panel5.setVisible(true);

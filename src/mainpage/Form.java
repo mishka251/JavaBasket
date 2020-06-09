@@ -48,7 +48,7 @@ class Form extends JFrame {
         Date date = new Date();
         data = new BucketData();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
-        setTitle("Веселова Ю. " + sd.format(date));
+        setTitle("Гафуров А. " + sd.format(date));
         setSize(450, 666);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         panel1 = new Panel1();

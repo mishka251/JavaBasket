@@ -73,7 +73,7 @@ class Form1 extends JFrame {
         setLayout(null);
         Date date = new Date();
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
-        setTitle("Веселова Ю." + sd.format(date));
+        setTitle("Гафуров А." + sd.format(date));
         setSize(355, 190);
         Panel5 panel5 = new Panel5();
         panel5.setVisible(true);

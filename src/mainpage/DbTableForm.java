@@ -29,7 +29,7 @@ public class DbTableForm extends JFrame {
         setSize(700, 400);
         setVisible(true);
         SimpleDateFormat sd = new SimpleDateFormat("dd.MM.yyyy");
-        setTitle("Веселова Ю. " + sd.format(new Date()));
+        setTitle("Гафуров А. " + sd.format(new Date()));
 
         JPanel panel1 = new JPanel();
         panel1.setBounds(20, 50, 660, 230);
